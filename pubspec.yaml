@@ -1,0 +1,14 @@
+name: sign_config
+description: A remote config signing app
+version: 1.0.0
+homepage: https://www.example.com
+
+environment:
+  sdk: '>=2.12.3 <3.0.0'
+
+dev_dependencies:
+  pedantic: ^1.9.0
+  test: ^1.14.4
+dependencies: 
+  args: ^2.1.1
+  jose: ^0.3.2
