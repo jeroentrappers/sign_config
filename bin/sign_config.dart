@@ -8,6 +8,10 @@ Future<int> main(List<String> arguments) async {
         return await signImpl(args);
       case verify:
         return await verifyImpl(args);
+      case encrypt:
+        return await encryptImpl(args);
+      case decrypt:
+        return await decryptImpl(args);
     }
 
   } on Error catch (e) {
