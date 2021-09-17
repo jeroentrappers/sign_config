@@ -2,6 +2,7 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:sign_config/sign_config.dart';
 import 'package:test/test.dart';
 import 'package:convert/convert.dart';
 
@@ -51,6 +52,18 @@ void main() {
     expect(result, input);
 
     //output.json should match example.json.
+  });
+
+  test('decryptInternal', () async{
+    var encrypted = File('test/assets/suspensionList.encrypted');
+    var cipherText = await encrypted.readAsString();
+
+    var cert = File('../../keys/decrypt.jwk');
+    var key = await cert.readAsString();
+
+    var decrypted = await decryptInternal(cipherText, key);
+    var payload = jsonDecode(utf8.decode(decrypted));
+    print(payload);
   });
 
   test('zlib null compression', () async {

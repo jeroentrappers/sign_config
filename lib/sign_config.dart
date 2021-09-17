@@ -131,22 +131,22 @@ Future<int> decryptImpl(ArgResults args) async {
   try {
     var input = File(args.command?[inputFile]);
     var output = File(args.command?[outputFile]);
-
-    var encoded = await input.readAsString();
-    var jwe = JsonWebEncryption.fromCompactSerialization(encoded);
-
     var cert = File(args.command?[decryptCert]);
     var jwkJson = await cert.readAsString();
-    var jwk = JsonWebKey.fromJson(jsonDecode(jwkJson));
-
-    var keyStore = JsonWebKeyStore()..addKey(jwk);
-
-    var payload = await jwe.getPayload(keyStore);
-    var unzipped = ZLibCodec(level: ZLibOption.maxLevel).decoder.convert(payload.data);
-    await output.writeAsBytes(unzipped);
+    var encoded = await input.readAsString();
+    await output.writeAsBytes(await decryptInternal(encoded, jwkJson));
     return 0;
   } on JoseException catch (e) {
     if (args['verbose']) print(e);
     return -1;
   }
+}
+
+Future<List<int>> decryptInternal(String cipherText, String key) async {
+    var jwe = JsonWebEncryption.fromCompactSerialization(cipherText);
+    var jwk = JsonWebKey.fromJson(jsonDecode(key));
+    var keyStore = JsonWebKeyStore()..addKey(jwk);
+    var payload = await jwe.getPayload(keyStore);
+    var unzipped = ZLibCodec(level: ZLibOption.maxLevel).decoder.convert(payload.data);
+    return unzipped;
 }
